@@ -23,14 +23,24 @@ bot.on('message', async (msg) => {
 	const text = msg.text;
 	const chatId = msg.chat.id;
 	const name = msg.from.first_name;
-	const users = [];
 
-	const getUsers = () =>
-		bot.getChatAdministrators(chatId).then((data) => {
-			data.forEach((user) => {
-				if (user.user.is_bot === false) users.push(user.user.first_name);
-			});
-		});
+	const getUsers = new Promise(function (resolve, reject) {
+		const users = [];
+		if (/^-/.test(chatId)) {
+			bot.getChatAdministrators(chatId)
+				.then((data) => {
+					data.forEach((item) => {
+						if (item.user.is_bot === false)
+							users.push(item.user.first_name);
+					});
+				})
+				.then(() => {
+					resolve(users);
+				});
+		} else {
+			return resolve(users);
+		}
+	});
 
 	if (text === '/start' || text === '/start@the_gnzd_bot') {
 		return bot.sendMessage(chatId, `Здарова, ты попал к боту банды GNZD`);
@@ -39,12 +49,20 @@ bot.on('message', async (msg) => {
 		return bot.sendMessage(chatId, `Тебя зовут ${name}`);
 	}
 	if (text === '/timetotalk' || text === '/timetotalk@the_gnzd_bot') {
-		await getUsers();
-		return bot.sendMessage(
-			chatId,
-			`${
-				users[Math.floor(Math.random() * users.length)]
-			} тебе повезло, записывай кружок`
-		);
+		getUsers.then((data) => {
+			if (data.length === 0) {
+				return bot.sendMessage(
+					chatId,
+					'Это работает только в групповых чатах'
+				);
+			} else {
+				return bot.sendMessage(
+					chatId,
+					`${
+						data[Math.floor(Math.random() * data.length)]
+					} тебе повезло, записывай кружок`
+				);
+			}
+		});
 	}
 });
