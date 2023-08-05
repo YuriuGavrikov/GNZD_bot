@@ -17,10 +17,10 @@ const dailyNotification = (chatId, data) => {
 	const dailyData = data;
 
 	return cron.schedule('00 11 * * *', () => {
+		const user = dailyData[Math.floor(Math.random() * dailyData.length)];
 		bot.sendMessage(
 			dailyChatId,
-			`🎉 ${dailyData[Math.floor(Math.random() * dailyData.length)]
-			} тебе повезло 🎉, записывай кружок ⭕`
+			`🎉 ${user.name} тебе повезло 🎉, записывай кружок ⭕ @${user.username}`
 		);
 	});
 };
@@ -48,6 +48,9 @@ bot.on('message', async (msg) => {
 	const text = msg.text;
 	const chatId = msg.chat.id;
 	const name = msg.from.first_name;
+	const username = msg.from.username;
+
+	console.log(username);
 
 	const getUsers = new Promise(function (resolve, reject) {
 		//Получает всех юзеров в чате кроме ботов
@@ -57,7 +60,10 @@ bot.on('message', async (msg) => {
 				.then((data) => {
 					data.forEach((item) => {
 						if (item.user.is_bot === false)
-							users.push(item.user.first_name);
+							users.push({
+								name: item.user.first_name,
+								username: item.user.username
+							});
 					});
 				})
 				.then(() => {
