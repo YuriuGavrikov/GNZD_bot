@@ -6,7 +6,7 @@ const TOKEN = '6421481723:AAGecmtKjMac1rE9aRD9F3gfuOJ0hc28bsk';
 const bot = new TelegramApi(TOKEN, { polling: true, parse_mode: 'HTML' });
 
 //Обьект с данными о состоянии уведомления в чате
-let activeChats = new Map();
+const activeChats = new Map();
 
 
 function dailyNotification(chatId, users) {
@@ -16,7 +16,7 @@ function dailyNotification(chatId, users) {
       bot.sendMessage(
          chatId,
          `🎉 <b>${user.name}</b> тебе повезло 🎉, записывай кружок ⭕
-@${!user.username ? user.username : 'У этого человека нет username'}`,
+@${user.username ? user.username : 'У этого человека нет username'}`,
          { parse_mode: 'HTML' }
       );
    }, {
