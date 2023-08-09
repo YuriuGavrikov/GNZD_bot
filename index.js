@@ -1,5 +1,5 @@
-import TelegramApi from 'node-telegram-bot-api';
-import cron from 'node-cron';
+const TelegramApi = require('node-telegram-bot-api');
+const cron = require('node-cron');
 
 const TOKEN = '6421481723:AAGecmtKjMac1rE9aRD9F3gfuOJ0hc28bsk';
 
@@ -7,7 +7,6 @@ const bot = new TelegramApi(TOKEN, { polling: true, parse_mode: 'HTML' });
 
 //Обьект с данными о состоянии уведомления в чате
 const activeChats = new Map();
-
 
 function dailyNotification(chatId, users) {
    //Функция ежедневного уведомления
